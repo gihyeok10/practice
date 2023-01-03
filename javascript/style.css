@@ -36,3 +36,10 @@ body{
     justify-content:space-between ;
     padding: 1em;
 }
+.task-done {
+    text-decoration: line-through;
+    background-color: gray;
+}
+.task-tabs {
+    cursor: pointer;
+}
