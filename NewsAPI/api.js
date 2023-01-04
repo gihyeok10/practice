@@ -9,4 +9,10 @@ const getLatestNews = ()=> {
 
 }
 
-getLatestNews();
+async function request() {
+    const response = await fetch(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=2`,
+    {headers:{'x-api-key':'pwMxbU6gOMBez-pDRnY5nC_hbygPm2_1TTPyBFxPepI'}})
+    const data = await response.json();
+    console.log(data)
+  }
+  request();
