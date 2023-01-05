@@ -1,5 +1,7 @@
 let news = [];
 let menus = document.querySelectorAll(".menus button");
+let searchButton = document.getElementById("search-button");
+console.log("버튼은?",searchButton);
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByTopic(event)));
 const getLatestNews = async ()=> {
     const url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10`);              //URL을 쓰기 위한 클래스
@@ -14,6 +16,8 @@ const getLatestNews = async ()=> {
     render()
 }
 
+
+
 const getNewsByTopic =async (event) => {
     console.log("클릭댐",event.target.textContent)
     let topic = event.target.textContent.toLowerCase();
@@ -24,6 +28,27 @@ const getNewsByTopic =async (event) => {
     news = data.articles
     render();
 };
+
+
+const getNewsByKeyWorld= async () => {
+    //1.검색 키워드 읽어오기.
+    //2.url에 검색 키워드 붙이기
+    //3. 헤더준비
+    //4. url 부르기
+    //5. 데이터 가져오기
+    //6. 데이터 보여주기
+
+    let keyWorld = document.getElementById("search-input").value
+    let url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyWorld}&from='2021/12/15' &countries=KR&page_size=10`)
+    const header = new Headers({'x-api-key':'MRaYCOyGR7aj5KSkcNyGAzuaGxRsVXvMgDbLJEIiWpE'})
+    const response =  await fetch(url,{headers:header});
+    const data = await response.json()
+    news = data.articles
+    render();
+
+}
+
+
 
 const render = () => {
     let newsHTML = ""
@@ -50,7 +75,7 @@ const render = () => {
 
 getLatestNews();
 
-
+searchButton.addEventListener("click",getNewsByKeyWorld);
 
 // async function request() {
 //     const response = await fetch(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=2`,
