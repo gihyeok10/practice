@@ -1,5 +1,7 @@
 //0
 let news = [];
+let page =1;
+let total_pages = 0;
 let url;
 let menus = document.querySelectorAll(".menus button");
 console.log("menus",menus)
@@ -15,7 +17,8 @@ menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByTopic(e
 const getNews = async() => {
     
     try{
-        let header = new Headers({'x-api-key':'l8rAwZmm9Wm6XCGB6N7CSPE1LHoyztGHSl6tnsxDsQ'})
+        let header = new Headers({'x-api-key':'l8rAwZmm9Wm6XCGB6N7CSPE1LHoyztGHSl6tnsxDsQ0'})
+        url.searchParams.set("page", page) // &page = ${page} url뒤에 페이지 붙이기.
         let response =  await fetch(url,{headers:header});
         let data = await response.json()
         if (response.status == 200){
@@ -23,8 +26,11 @@ const getNews = async() => {
                 throw new Error("검색된 결과값이 없습니다!")
             }
             news = data.articles
+            total_pages = data.total_pages;
+            page = data.page;
             console.log(news)
             render();
+            pagination();
         }else{
             throw new Error(data.message)
         }
@@ -97,9 +103,63 @@ const errorRender = (message) => {
     document.getElementById("news-board").innerHTML = errorHTML
 }
 
+const pagination = () => {
+    let paginationHTML = ``
+    //총 페이지
+    // 내가 보고있는 페이지
+    //그룹
+    //첫번째, 마지막페이지 
+
+    let pageGroup = Math.ceil(page/5)
+    let last =pageGroup * 5
+    let first = last-4
+    
+    for(let i= first; i<=last; i++){
+        
+        paginationHTML += `<li class="page-item" ${page == i? "active" : "null"}><a class="page-link" href="#" onclick="moveToPage(${i})">${i}</a></li>`
+
+    }
+
+    document.querySelector(".pagination").innerHTML=paginationHTML;
+
+}
+
+//페이지 기준으로 내가 몇번째 기준인지
+//그 그룹의 처번째와 마지막 페이지를 안다. (그룹숫자 * 5)
+//첫번째 페이지 (마지막 - 4)
+//그려주기 for
+
+const moveToPage = (pageNumber) => {
+    page = pageNumber;
+    console.log(page);
+    //이동하고 싶은 페이지 알기
+    //이동하고 싶은 페이지를 가지고 api를 다시 호출 해주자.
+
+
+
+
+}
+
 getLatestNews();
 
 searchButton.addEventListener("click",getNewsByKeyWorld);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // async function request() {
 //     const response = await fetch(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=business&page_size=2`,
