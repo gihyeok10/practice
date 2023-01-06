@@ -1,32 +1,53 @@
+//0
 let news = [];
+let url;
 let menus = document.querySelectorAll(".menus button");
+console.log("menus",menus)
 let searchButton = document.getElementById("search-button");
 console.log("버튼은?",searchButton);
 menus.forEach(menu => menu.addEventListener("click", (event) => getNewsByTopic(event)));
-const getLatestNews = async ()=> {
-    const url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10`);              //URL을 쓰기 위한 클래스
-    console.log(url);
 
-    const header = new Headers({'x-api-key':'MRaYCOyGR7aj5KSkcNyGAzuaGxRsVXvMgDbLJEIiWpE'})
+//각 함수에서 필요한 URL을 만듬.
+//호출 API함수를 부름.
+//겹치는 부분 함수로 만듦.
 
-    const response =  await fetch(url,{headers:header});
-    const data = await response.json()
-    news = data.articles
-    console.log(news)
-    render()
+
+const getNews = async() => {
+    
+    try{
+        let header = new Headers({'x-api-key':'l8rAwZmm9Wm6XCGB6N7CSPE1LHoyztGHSl6tnsxDsQ'})
+        let response =  await fetch(url,{headers:header});
+        let data = await response.json()
+        if (response.status == 200){
+            if(data.total_hits == 0){
+                throw new Error("검색된 결과값이 없습니다!")
+            }
+            news = data.articles
+            console.log(news)
+            render();
+        }else{
+            throw new Error(data.message)
+        }
+      
+    }catch(error){
+        console.log("에러이유:",error.message)
+        errorRender(error.message);
+    }
+
+    
 }
+const getLatestNews = async ()=> {
+     url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10`);              //URL을 쓰기 위한 클래스
+     getNews();
+};
 
 
 
-const getNewsByTopic =async (event) => {
-    console.log("클릭댐",event.target.textContent)
+const getNewsByTopic = async (event) => {
+    console.log("클릭댐",event.target.textContent.toLowerCase());
     let topic = event.target.textContent.toLowerCase();
-    let url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10&topic=${topic}`)
-    const header = new Headers({'x-api-key':'MRaYCOyGR7aj5KSkcNyGAzuaGxRsVXvMgDbLJEIiWpE'})
-    const response =  await fetch(url,{headers:header});
-    const data = await response.json()
-    news = data.articles
-    render();
+    url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`)
+    getNews();
 };
 
 
@@ -38,13 +59,10 @@ const getNewsByKeyWorld= async () => {
     //5. 데이터 가져오기
     //6. 데이터 보여주기
 
-    let keyWorld = document.getElementById("search-input").value
-    let url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyWorld}&from='2021/12/15' &countries=KR&page_size=10`)
-    const header = new Headers({'x-api-key':'MRaYCOyGR7aj5KSkcNyGAzuaGxRsVXvMgDbLJEIiWpE'})
-    const response =  await fetch(url,{headers:header});
-    const data = await response.json()
-    news = data.articles
-    render();
+    let keyworld = document.getElementById("search-input").value
+    console.log(keyworld);
+    url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyworld}&page_size=10`)
+    getNews();
 
 }
 
@@ -71,6 +89,12 @@ const render = () => {
     
 
     document.getElementById("news-board").innerHTML = newsHTML
+}
+
+const errorRender = (message) => {
+    let errorHTML = `<div class="alert alert-danger text-center" role="alert>
+    ${message}</div>`
+    document.getElementById("news-board").innerHTML = errorHTML
 }
 
 getLatestNews();
