@@ -104,12 +104,17 @@ const errorRender = (message) => {
 }
 
 const pagination = () => {
-    let paginationHTML = ``
+    let paginationHTML = ` <li class="page-item">
+    <a class="page-link" href="#" aria-label="Previous" onclick="moveToPage(${page-1})">
+      <span aria-hidden="true">&lt;</span>
+    </a>
+  </li>`
     //총 페이지
     // 내가 보고있는 페이지
     //그룹
     //첫번째, 마지막페이지 
-
+    //totla page가 3개 이하로 있다면..?
+    
     let pageGroup = Math.ceil(page/5)
     let last =pageGroup * 5
     let first = last-4
@@ -119,6 +124,12 @@ const pagination = () => {
         paginationHTML += `<li class="page-item" ${page == i? "active" : "null"}><a class="page-link" href="#" onclick="moveToPage(${i})">${i}</a></li>`
 
     }
+
+    paginationHTML += `  <li class="page-item">
+    <a class="page-link" href="#" aria-label="Next" onclick="moveToPage(${page+1})">
+      <span aria-hidden="true">&gt;</span>
+    </a>
+  </li>`
 
     document.querySelector(".pagination").innerHTML=paginationHTML;
 
